@@ -1,0 +1,47 @@
+@startuml db
+
+entity User {
+    * id UNSIGNED INTEGER <<PK>>
+    --
+    * username STRING
+    * email STRING
+    * password STRING
+    * admin BOOLEAN
+    * created_at TIMESTAMP
+    * updated_at TIMESTAMP
+}
+
+entity Order {
+    * id UNSIGNED INTEGER <<PK>>
+    --
+    * address STRING
+    * payment_method STRING
+    * user_id UNSIGNED INTEGER <<FK>>
+    * created_at TIMESTAMP
+    * updated_at TIMESTAMP
+}
+
+entity Item {
+    * id UNSIGNED INTEGER <<PK>>
+    --
+    * order_id UNSIGNED INTEGER <<FK>>
+    * product_id UNSIGNED INTEGER <<FK>>
+    * quantity UNSIGNED INTEGER
+    * created_at TIMESTAMP
+    * updated_at TIMESTAMP
+}
+
+entity Product {
+    * id UNSIGNED INTEGER <<PK>>
+    --
+    * name STRING
+    * price UNSIGNED INTEGER
+    * created_at TIMESTAMP
+    * updated_at TIMESTAMP
+}
+
+User ||--o{ Order
+Order ||--o{ Item
+Item ||--|| Product
+
+@enduml

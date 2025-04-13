@@ -9,7 +9,8 @@ import (
 
 type Item struct {
 	Base
-	ProductID uint `gorm:"not null" json:"product_id" form:"address" valid:"required~Address of your item is required"`
+	OrderID   uint `gorm:"not null" json:"order_id" form:"order_id"`
+	ProductID uint `gorm:"not null" json:"product_id" form:"product_id"`
 	Quantity  uint `gorm:"not null" json:"quantity" form:"quantity" valid:"required~Quantity of your item is required, numeric~Quantity must be numeric"`
 }
 

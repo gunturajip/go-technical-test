@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
@@ -22,7 +23,6 @@ import (
 func StartApp() *gin.Engine {
 	r := gin.Default()
 
-	// Read homepage content
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "Simple E-Commerce API")
 	})
@@ -31,10 +31,7 @@ func StartApp() *gin.Engine {
 
 	guestRouter := r.Group("/users")
 	{
-		// Register user
 		guestRouter.POST("/register", Controller.UserRegister)
-
-		// Login user
 		guestRouter.POST("/login", Controller.UserLogin)
 	}
 
@@ -42,47 +39,20 @@ func StartApp() *gin.Engine {
 	{
 		productRouter := r.Group("/products")
 		{
-			productRouter.GET("/", controllers.GetProducts)
-			productRouter.POST("/", controllers.CreateProduct)
-			productRouter.GET("/:productID", controllers.GetProduct)
-			productRouter.PUT("/:productID", middlewares.PhotoAuthorization(), controllers.UpdateProduct)
-			productRouter.DELETE("/:productID", middlewares.PhotoAuthorization(), controllers.DeleteProduct)
+			productRouter.GET("/", Controller.GetProducts)
+			productRouter.POST("/", Controller.CreateProduct)
+			productRouter.GET("/:productID", Controller.GetProduct)
+			productRouter.PUT("/:productID", Middleware.ProductAuthorization(), Controller.UpdateProduct)
+			productRouter.DELETE("/:productID", Middleware.ProductAuthorization(), Controller.DeleteProduct)
 		}
 
-		commentRouter := r.Group("/comments")
+		orderRouter := r.Group("/orders")
 		{
-			// Get all comments
-			commentRouter.GET("/", controllers.GetComments)
-
-			// Post comment
-			commentRouter.POST("/", controllers.CreateComment)
-
-			// Get comment by id
-			commentRouter.GET("/:commentID", controllers.GetComment)
-
-			// Update comment by id
-			commentRouter.PUT("/:commentID", middlewares.CommentAuthorization(), controllers.UpdateComment)
-
-			// Delete comment by id
-			commentRouter.DELETE("/:commentID", middlewares.CommentAuthorization(), controllers.DeleteComment)
-		}
-
-		socialMediaRouter := r.Group("/socialmedia")
-		{
-			// Get all social media
-			socialMediaRouter.GET("/", controllers.GetSocialMedias)
-
-			// Post social media
-			socialMediaRouter.POST("/", controllers.CreateSocialMedia)
-
-			// Get social media by id
-			socialMediaRouter.GET("/:socialMediaID", controllers.GetSocialMedia)
-
-			// Update social media by id
-			socialMediaRouter.PUT("/:socialMediaID", middlewares.SocialMediaAuthorization(), controllers.UpdateSocialMedia)
-
-			// Delete social media by id
-			socialMediaRouter.DELETE("/:socialMediaID", middlewares.SocialMediaAuthorization(), controllers.DeleteSocialMedia)
+			orderRouter.GET("/", Controller.GetOrders)
+			orderRouter.POST("/", Controller.CreateOrder)
+			orderRouter.GET("/:orderID", Controller.GetOrder)
+			orderRouter.PUT("/:orderID", Middleware.OrderAuthorization(), Controller.UpdateOrder)
+			orderRouter.DELETE("/:orderID", Middleware.OrderAuthorization(), Controller.DeleteOrder)
 		}
 	}
 

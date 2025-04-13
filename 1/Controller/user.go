@@ -30,15 +30,14 @@ type loginInput struct {
 // @Accept json
 // @Produce json
 // @Param Input body registerInput true "register a user"
-// @Success 201 {object} models.Response
-// @Failure 400 {object} models.Response
+// @Success 201 {object} Model.Response
+// @Failure 400 {object} Model.Response
 // @Router /users/register [post]
 func UserRegister(c *gin.Context) {
 	db := Config.GetDB()
 	response := Model.Response{}
 
 	contentType := Util.GetContentType(c)
-	_, _ = db, contentType
 	User := Model.User{}
 	registerInput := registerInput{}
 
@@ -51,6 +50,7 @@ func UserRegister(c *gin.Context) {
 	User.Email = registerInput.Email
 	User.Password = registerInput.Password
 	User.Username = registerInput.Username
+	User.Admin = registerInput.Admin
 
 	err := db.Debug().Create(&User).Error
 
@@ -72,15 +72,14 @@ func UserRegister(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param Input body loginInput true "login a user"
-// @Success 200 {object} models.Response
-// @Failure 400 {object} models.Response
+// @Success 200 {object} Model.Response
+// @Failure 400 {object} Model.Response
 // @Router /users/login [post]
 func UserLogin(c *gin.Context) {
 	db := Config.GetDB()
 	response := Model.Response{}
 
 	contentType := Util.GetContentType(c)
-	_, _ = db, contentType
 	User := Model.User{}
 	loginInput := loginInput{}
 

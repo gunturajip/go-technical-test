@@ -7,10 +7,10 @@ import (
 
 type Order struct {
 	Base
-	Address       string `gorm:"not null" json:"address" form:"address" valid:"required~Address of your order is required"`
-	PaymentMethod string `gorm:"not null" json:"payment_method" form:"payment_method" valid:"required~Payment method of your order is required"`
-	UserID        uint   `gorm:"not null" json:"user_id"`
-	Items         []Item `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"-"`
+	Address           string `gorm:"not null" json:"address" form:"address" valid:"required~Address of your order is required"`
+	PurchaseProofLink string `gorm:"not null" json:"purchase_proof_link" form:"purchase_proof_link" valid:"required~Purchase prrof link of your order is required"`
+	UserID            uint   `gorm:"not null" json:"user_id"`
+	Items             []Item `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"-"`
 }
 
 func (o *Order) BeforeCreate(tx *gorm.DB) (err error) {
