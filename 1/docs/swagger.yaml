@@ -1,0 +1,418 @@
+definitions:
+  Controller.loginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  Controller.registerInput:
+    properties:
+      admin:
+        type: boolean
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  Model.Order:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      purchase_proof_link:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  Model.Product:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  Model.Response:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+info:
+  contact:
+    email: soberkoder@swagger.io
+    name: API Support
+  description: This is a simple e-commerce API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Mygram (Simple E-Commerce)
+  version: "1.0"
+paths:
+  /orders:
+    get:
+      consumes:
+      - application/json
+      description: Get all orders data
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Get all orders
+      tags:
+      - comment
+    post:
+      consumes:
+      - application/json
+      description: Post details of a new order
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: create a order
+        in: body
+        name: Model.Order
+        required: true
+        schema:
+          $ref: '#/definitions/Model.Order'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Post a new order
+      tags:
+      - order
+  /orders/{ID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete details of a order corresponding to the input ID
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID of the order
+        in: path
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Delete order details for a given ID
+      tags:
+      - order
+    get:
+      consumes:
+      - application/json
+      description: Get details of a order corresponding to the input ID
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID of the order
+        in: path
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Get order details for the given ID
+      tags:
+      - order
+    put:
+      consumes:
+      - application/json
+      description: Update details of a order corresponding to the input ID
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID of the order
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: update order
+        in: body
+        name: Model.Order
+        required: true
+        schema:
+          $ref: '#/definitions/Model.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Update order for the given ID
+      tags:
+      - order
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Get all products data
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Get all products
+      tags:
+      - comment
+    post:
+      consumes:
+      - application/json
+      description: Post details of a new product
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: create a product
+        in: body
+        name: Model.Product
+        required: true
+        schema:
+          $ref: '#/definitions/Model.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Post a new product
+      tags:
+      - product
+  /products/{ID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete details of a product corresponding to the input ID
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID of the product
+        in: path
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Delete product details for a given ID
+      tags:
+      - product
+    get:
+      consumes:
+      - application/json
+      description: Get details of a product corresponding to the input ID
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID of the product
+        in: path
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Get product details for the given ID
+      tags:
+      - product
+    put:
+      consumes:
+      - application/json
+      description: Update details of a product corresponding to the input ID
+      parameters:
+      - description: Type Bearer your_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID of the product
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: update product
+        in: body
+        name: Model.Product
+        required: true
+        schema:
+          $ref: '#/definitions/Model.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Update product for the given ID
+      tags:
+      - product
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Register an existing user using email, and password
+      parameters:
+      - description: login a user
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/Controller.loginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Login an existing user
+      tags:
+      - user
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user using email, username, and password
+      parameters:
+      - description: register a user
+        in: body
+        name: Input
+        required: true
+        schema:
+          $ref: '#/definitions/Controller.registerInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Model.Response'
+      summary: Register a new user
+      tags:
+      - user
+swagger: "2.0"
