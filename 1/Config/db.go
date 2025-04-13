@@ -9,12 +9,19 @@ import (
 	"gorm.io/gorm"
 )
 
+func GetEnv(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return fallback
+}
+
 var (
-	host     = os.Getenv("PGHOST")
-	user     = os.Getenv("PGUSER")
-	password = os.Getenv("PGPASSWORD")
-	port     = os.Getenv("PGPORT")
-	dbname   = os.Getenv("PGDATABASE")
+	host     = GetEnv("PGHOST", "localhost")
+	user     = GetEnv("PGUSER", "postgres")
+	password = GetEnv("PGPASSWORD", "postgres")
+	port     = GetEnv("PGPORT", "5432")
+	dbname   = GetEnv("PGDATABASE", "db_go_nexmedis")
 	db       *gorm.DB
 	err      error
 )

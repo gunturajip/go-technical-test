@@ -1,4 +1,4 @@
-package Database
+package main
 
 import (
 	"1/Config"
@@ -10,9 +10,9 @@ func main() {
 	db := Config.GetDB()
 	db.Debug().AutoMigrate(
 		Model.User{},
+		Model.Product{},
 		Model.Order{},
 		Model.Item{},
-		Model.Product{},
 	)
 	defer Config.CloseDB()
 }

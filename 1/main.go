@@ -3,13 +3,12 @@ package main
 import (
 	"1/Config"
 	"1/Router"
-	"os"
 )
 
 func main() {
 	Config.StartDB()
 	defer Config.CloseDB()
 	r := Router.StartApp()
-	var PORT = os.Getenv("PORT")
+	var PORT = Config.GetEnv("PORT", "8080")
 	r.Run(":" + PORT)
 }
