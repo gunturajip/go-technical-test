@@ -24,8 +24,14 @@ func GetProducts(c *gin.Context) {
 	response := Model.Response{}
 
 	Products := []Model.Product{}
+	name := c.Query("name")
+	query := db.Model(&Model.Product{})
 
-	err := db.Find(&Products).Error
+	if name != "" {
+		query = query.Where("name ILIKE ?", "%"+name+"%")
+	}
+
+	err := query.Find(&Products).Error
 	if err != nil {
 		response.Error = "Bad Request"
 		response.Message = err.Error()

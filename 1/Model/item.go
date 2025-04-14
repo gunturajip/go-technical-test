@@ -11,7 +11,7 @@ type Item struct {
 	Base
 	OrderID   uint    `gorm:"not null" json:"order_id" form:"order_id"`
 	ProductID uint    `gorm:"not null" json:"product_id" form:"product_id"`
-	Product   Product `gorm:"foreignKey:ProductID"`
+	Product   Product `gorm:"foreignKey:ProductID" json:"-" valid:"-"`
 	Quantity  uint    `gorm:"not null" json:"quantity" form:"quantity" valid:"required~Quantity of your item is required, numeric~Quantity must be numeric"`
 }
 

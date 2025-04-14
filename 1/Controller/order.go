@@ -5,6 +5,7 @@ import (
 	"1/Model"
 	"1/Util"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +26,7 @@ func GetOrders(c *gin.Context) {
 
 	Orders := []Model.Order{}
 
-	err := db.Find(&Orders).Error
+	err := db.Preload("Items").Find(&Orders).Error
 	if err != nil {
 		response.Error = "Bad Request"
 		response.Message = err.Error()
@@ -54,7 +55,7 @@ func GetOrder(c *gin.Context) {
 	Order := Model.Order{}
 	orderID := c.Param("orderID")
 
-	err := db.First(&Order, "id = ?", orderID).Error
+	err := db.Preload("Items").First(&Order, "id = ?", orderID).Error
 	if err != nil {
 		response.Error = "Bad Request"
 		response.Message = err.Error()
@@ -88,6 +89,12 @@ func CreateOrder(c *gin.Context) {
 		c.ShouldBind(&Order)
 	}
 
+	if Order.PurchaseProofLink != "" {
+		Order.Status = "processing"
+	} else {
+		Order.Status = "draft"
+	}
+
 	errOrder := db.Create(&Order).Error
 	if errOrder != nil {
 		response.Error = "Bad Request"
@@ -118,16 +125,39 @@ func UpdateOrder(c *gin.Context) {
 	Order := Model.Order{}
 	orderID := c.Param("orderID")
 
-	contentType := Util.GetContentType(c)
-	if contentType == appJSON {
-		c.ShouldBindJSON(&Order)
-	} else {
-		c.ShouldBind(&Order)
+	var input struct {
+		Address           string       `json:"address"`
+		PurchaseProofLink string       `json:"purchase_proof_link"`
+		Status            string       `json:"status"`
+		UserID            uint         `json:"user_id"`
+		Items             []Model.Item `json:"items"`
 	}
 
-	errOrder := db.Model(&Order).Where("id = ?", orderID).Updates(Model.Order{
-		Address:           Order.Address,
-		PurchaseProofLink: Order.PurchaseProofLink,
+	contentType := Util.GetContentType(c)
+	if contentType == appJSON {
+		c.ShouldBindJSON(&input)
+	} else {
+		c.ShouldBind(&input)
+	}
+
+	if input.PurchaseProofLink != "" {
+		input.Status = "processing"
+	} else {
+		input.Status = "draft"
+	}
+
+	errOrderItems := db.Where("order_id = ?", orderID).Delete(&input.Items).Error
+	if errOrderItems != nil {
+		response.Error = "Bad Request"
+		response.Message = errOrderItems.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	errOrder := db.Model(&Order).Where("id = ?", orderID).Updates(map[string]interface{}{
+		"address":             input.Address,
+		"purchase_proof_link": input.PurchaseProofLink,
+		"status":              input.Status,
 	}).Error
 	if errOrder != nil {
 		response.Error = "Bad Request"
@@ -135,6 +165,25 @@ func UpdateOrder(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+
+	items := make([]Model.Item, len(input.Items))
+	uintOrderID, _ := strconv.ParseUint(orderID, 10, 32)
+	for i, item := range input.Items {
+		items[i] = Model.Item{
+			OrderID:   uint(uintOrderID),
+			ProductID: item.ProductID,
+			Quantity:  item.Quantity,
+		}
+	}
+
+	errItem := db.Create(&items).Error
+	if errItem != nil {
+		response.Error = "Bad Request"
+		response.Message = errItem.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
 	c.JSON(http.StatusNoContent, response)
 }
 
@@ -156,10 +205,18 @@ func DeleteOrder(c *gin.Context) {
 	Order := Model.Order{}
 	orderID := c.Param("orderID")
 
-	err := db.Where("id = ?", orderID).Delete(&Order).Error
-	if err != nil {
+	errOrderItems := db.Where("order_id = ?", orderID).Delete(&Order.Items).Error
+	if errOrderItems != nil {
 		response.Error = "Bad Request"
-		response.Message = err.Error()
+		response.Message = errOrderItems.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	errOrder := db.Where("id = ?", orderID).Delete(&Order).Error
+	if errOrder != nil {
+		response.Error = "Bad Request"
+		response.Message = errOrder.Error()
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}

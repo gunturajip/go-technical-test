@@ -48,8 +48,8 @@ func OrderAuthorization() gin.HandlerFunc {
 		}
 
 		userData := c.MustGet("userData").(jwt.MapClaims)
-		userID := userData["id"].(uint)
-		if Order.UserID != userID {
+		userID := userData["id"].(float64)
+		if Order.UserID != uint(userID) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error":   "Unauthorized",
 				"message": "you are not allowed to update / delete this order",
